@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+    
+  sri-web-application:
+    image: svelugoti/demo:0.0.2-SNAPSHOT
+    #build:
+      #context: .
+      #dockerfile: Dockerfile
+    ports:
+      - "7075:7075"
+    restart: always
+    depends_on: # Start the depends_on first
+      - myapp-mysql 
+    environment:
+      - DATABASE_HOST=myapp-mysql
+      - DATABASE_USER=sri-user
+      - DATABASE_PASSWORD=dummytodos
+      - DATABASE_NAME=srischema
+      - DATABASE_PORT=3306  
+    networks:
+      - sri-web-application-network 
+  myapp-mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      #MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: dummypassword 
+      MYSQL_USER: sri-user
+      MYSQL_PASSWORD: dummytodos
+      MYSQL_DATABASE: srischema
+    volumes:
+      - mysql-database-data-volume:/var/lib/mysql
+    networks:
+      - sri-web-application-network  
+  
+# Volumes
+volumes:
+  mysql-database-data-volume:
+
+networks:
+  sri-web-application-network:
